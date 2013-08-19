@@ -141,6 +141,8 @@ This is a generic rate-limiter object, implementing the math described in
 L<http://www.perl.com/pub/2004/11/11/floodcontrol.html> in lightweight
 objects.
 
+Fractional seconds are supported.
+
 =head2 new
 
   my $ctrl = Object::RateLimiter->new(
@@ -178,7 +180,7 @@ Clears the event history.
 The C<delay()> method determines if some work can be done now, or should wait.
 
 When called, a new event timestamp is recorded; if we've exceeded our limit,
-the current delay (in possibly-fractional seconds) until the event is allowed
+the current delay in (possibly fractional) seconds until the event is allowed
 is returned.
 
 A return value of 0 indicates that the event does not need to wait.
