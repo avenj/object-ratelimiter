@@ -11,6 +11,9 @@ my $ctrl = new_ok 'Object::RateLimiter' => [
   seconds => 600,
 ];
 
+isa_ok $ctrl->new(events => 1, seconds => 2), 'Object::RateLimiter',
+  '$obj->new';
+
 # seconds() / events()
 cmp_ok $ctrl->seconds, '==', 600, 'seconds() ok';
 cmp_ok $ctrl->events,  '==', 3,   'events() ok';

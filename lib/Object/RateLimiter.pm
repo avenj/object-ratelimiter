@@ -18,6 +18,9 @@ sub _queue   { $_[0]->[QUEUE]  }
 
 sub new {
   my ($class, %params) = @_;
+  if (my $rtype = ref $class) {
+    $class = $rtype
+  }
 
   unless (defined $params{seconds} && defined $params{events}) {
     confess "Constructor requires 'seconds =>' and 'events =>' parameters"
