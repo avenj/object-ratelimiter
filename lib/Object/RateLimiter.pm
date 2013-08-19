@@ -152,13 +152,45 @@ Constructs a new rate-limiter with a clean event history.
 
 =head2 clone
 
-  my $new_ctrl = $ctrl->clone( events => 2, seconds => 
+  my $new_ctrl = $ctrl->clone( events => 4 );
+
+Clones an existing rate-limiter; new options can be provided, overriding
+previous settings. 
+
+The new limiter contains a clone of the event history; the old rate-limiter is
+left untouched.
 
 =head2 clear
 
+  $ctrl->clear;
+
+Clears the event history.
+
 =head2 delay
 
+  if (my $delay = $ctrl->delay) {
+    sleep $delay;  # ... or do something else
+  } else {
+    # Not delayed.
+    do_work;
+  }
+
+The C<delay()> method determines if some work can be done now, or should wait.
+
+When called, a new event timestamp is recorded; if we've exceeded our limit,
+the current delay (in possibly-fractional seconds) until the event is allowed
+is returned.
+
+A return value of 0 indicates that the event does not need to wait.
+
 =head2 expire
+
+  $ctrl->expire;
+
+Clears the event history if the last seen event is outside of our time window.
+
+(You're not required to call C<expire()>, but it can be useful to force a
+cleanup.)
 
 =head1 AUTHOR
 
