@@ -100,7 +100,7 @@ sub expire {
 
 =head1 NAME
 
-Object::RateLimiter - A flood control / rate limiter object
+Object::RateLimiter - A flood control (rate limiter) object
 
 =head1 SYNOPSIS
 
@@ -207,5 +207,7 @@ Jon Portnoy <avenj@cobaltirc.org>
 Based on the math from L<Algorithm::FloodControl> as described in an article
 written by the author:
 L<http://www.perl.com/pub/2004/11/11/floodcontrol.html>
+
+Licensed under the same terms as Perl.
 
 =cut

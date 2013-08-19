@@ -1,6 +1,6 @@
 # NAME
 
-Object::RateLimiter - A flood control / rate limiter object
+Object::RateLimiter - A flood control (rate limiter) object
 
 # SYNOPSIS
 
@@ -107,3 +107,5 @@ Jon Portnoy <avenj@cobaltirc.org>
 Based on the math from [Algorithm::FloodControl](http://search.cpan.org/perldoc?Algorithm::FloodControl) as described in an article
 written by the author:
 [http://www.perl.com/pub/2004/11/11/floodcontrol.html](http://www.perl.com/pub/2004/11/11/floodcontrol.html)
+
+Licensed under the same terms as Perl.
