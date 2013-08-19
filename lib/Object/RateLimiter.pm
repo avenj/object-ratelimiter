@@ -37,6 +37,7 @@ sub clone {
 
   $params{events} = $self->events
     unless defined $params{events};
+
   $params{seconds} = $self->seconds
     unless defined $params{seconds};
 
@@ -63,6 +64,7 @@ sub delay {
         - Time::HiRes::time();
 
     return $delayed if $delayed > 0;
+
     $thisq->shift
   }
 
@@ -180,8 +182,8 @@ Always returns true.
 
 The C<delay()> method determines if some work can be done now, or should wait.
 
-When called, a new event timestamp is recorded; if we have exceeded our limit,
-the current delay in (possibly fractional) seconds until the event would be
+When called, event timestamps are considered; if we have exceeded our limit,
+the delay in (possibly fractional) seconds until the event would be
 allowed is returned.
 
 A return value of 0 indicates that the event does not need to wait.
