@@ -14,6 +14,7 @@ use namespace::clean;
 
 sub seconds  { $_[0]->[SECS]   }
 sub events   { $_[0]->[EVENTS] }
+sub _queue   { $_[0]->[QUEUE]  }
 
 sub new {
   my ($class, %params) = @_;
@@ -25,10 +26,10 @@ sub new {
   my $self = [
     $params{events},   # EVENTS
     $params{seconds},  # SECS
-    undef              # QUEUE
+    undef              # QUEUE (lazy-build from ->delay)
   ];
 
-  $self
+  bless $self, $class
 }
 
 sub clone {
@@ -41,7 +42,7 @@ sub clone {
 
   my $cloned = ref($self)->new(%params);
 
-  if (my $currentq = $self->[QUEUE]) {
+  if (my $currentq = $self->_queue) {
     $cloned->[QUEUE] = array( $currentq->all )
   }
 
@@ -50,9 +51,9 @@ sub clone {
 
 sub delay {
   my ($self) = @_;
-  my $thisq  = $self->[QUEUE] || array;
+  my $thisq  = $self->[QUEUE] ||= array;
 
-  if ((my $pending = $thisq->count) >= $self->count) {
+  if ((my $pending = $thisq->count) >= $self->events) {
     my $oldest_ts = $thisq->head;
     my $ev_lim    = $self->events;
     my $ev_sec    = $self->seconds;
@@ -66,8 +67,7 @@ sub delay {
   }
 
   $thisq->push( Time::HiRes::time );
-
-  0
+  return 0
 }
 
 sub clear {
@@ -79,7 +79,7 @@ sub clear {
 sub expire {
   my ($self) = @_;
 
-  my $events = $self->[QUEUE] || return;
+  my $events = $self->_queue || return;
   return unless $events->count;
 
   my $latest_ts = $events->get(-1);
