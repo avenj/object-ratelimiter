@@ -183,6 +183,10 @@ is returned.
 
 A return value of 0 indicates that the event does not need to wait.
 
+=head2 events
+
+Returns the B<events> limit the object was constructed with.
+
 =head2 expire
 
   $ctrl->expire;
@@ -191,6 +195,10 @@ Clears the event history if the last seen event is outside of our time window.
 
 (You're not required to call C<expire()>, but it can be useful to force a
 cleanup.)
+
+=head2 seconds
+
+Returns the B<seconds> limit the object was constructed with.
 
 =head1 AUTHOR
 
