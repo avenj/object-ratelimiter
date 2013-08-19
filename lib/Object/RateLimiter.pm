@@ -1,0 +1,171 @@
+package Object::RateLimiter;
+use strictures 1;
+use Carp;
+
+use Time::HiRes ();
+
+use List::Objects::WithUtils 'array';
+
+sub EVENTS () { 0 }
+sub SECS   () { 1 }
+sub QUEUE  () { 2 }
+
+use namespace::clean;
+
+sub seconds  { $_[0]->[SECS]   }
+sub events   { $_[0]->[EVENTS] }
+
+sub new {
+  my ($class, %params) = @_;
+
+  unless (defined $params{seconds} && defined $params{events}) {
+    confess "Constructor requires 'seconds =>' and 'events =>' parameters"
+  }
+
+  my $self = [
+    $params{events},   # EVENTS
+    $params{seconds},  # SECS
+    undef              # QUEUE
+  ];
+
+  $self
+}
+
+sub clone {
+  my ($self, %params) = @_;
+
+  $params{events} = $self->events
+    unless defined $params{events};
+  $params{seconds} = $self->seconds
+    unless defined $params{seconds};
+
+  my $cloned = ref($self)->new(%params);
+
+  if (my $currentq = $self->[QUEUE]) {
+    $cloned->[QUEUE] = array( $currentq->all )
+  }
+
+  $cloned
+}
+
+sub delay {
+  my ($self) = @_;
+  my $thisq  = $self->[QUEUE] || array;
+
+  if ((my $pending = $thisq->count) >= $self->count) {
+    my $oldest_ts = $thisq->head;
+    my $ev_lim    = $self->events;
+    my $ev_sec    = $self->seconds;
+
+    my $delayed =
+      ( $oldest_ts + ( $pending * $ev_sec / $ev_lim ) )
+        - Time::HiRes::time();
+
+    return $delayed if $delayed > 0;
+    $thisq->shift
+  }
+
+  $thisq->push( Time::HiRes::time );
+
+  0
+}
+
+sub clear {
+  my ($self) = @_;
+  $self->[QUEUE] = undef;
+  1
+}
+
+sub expire {
+  my ($self) = @_;
+
+  my $events = $self->[QUEUE] || return;
+  return unless $events->count;
+
+  my $latest_ts = $events->get(-1);
+  return unless defined $latest_ts;
+
+  if ( Time::HiRes::time() - $latest_ts > $self->seconds) {
+    # More than ->seconds seconds since last event was noted.
+    # We can clear().
+    return $self->clear
+  }
+
+  ()
+}
+
+1;
+
+=pod
+
+=head1 NAME
+
+Object::RateLimiter - A flood control / rate limiter object
+
+=head1 SYNOPSIS
+
+  use Object::RateLimiter;
+
+  my $ctrl = Object::RateLimiter->new(
+    events  => 3,
+    seconds => 5
+  );
+
+  # Run some subs, as a contrived example;
+  # no more than 3 in 5 seconds, per our constructor above:
+  my @work = (
+    sub { "foo" },
+    sub { "bar" },
+    # ...
+  );
+
+  while (my $some_item = shift @work) {
+    if (my $delay = $ctrl->delay) {
+      # Delayed $delay seconds.
+      sleep $delay;
+    } else {
+      # No delay.
+      $some_item->()
+    }
+  }
+
+  # Clear the event history if it's stale:
+  $ctrl->expire;
+
+  # Clear the event history unconditionally:
+  $ctrl->clear;
+
+=head1 DESCRIPTION
+
+This is a generic rate-limiter object, implementing the math described in
+L<http://www.perl.com/pub/2004/11/11/floodcontrol.html> in lightweight
+objects.
+
+=head2 new
+
+  my $ctrl = Object::RateLimiter->new(
+    events  => 3,
+    seconds => 5
+  );
+
+Constructs a new rate-limiter with a clean event history.
+
+=head2 clone
+
+  my $new_ctrl = $ctrl->clone( events => 2, seconds => 
+
+=head2 clear
+
+=head2 delay
+
+=head2 expire
+
+=head1 AUTHOR
+
+Jon Portnoy <avenj@cobaltirc.org>
+
+Based on the math from L<Algorithm::FloodControl> as described in an article
+written by the author:
+L<http://www.perl.com/pub/2004/11/11/floodcontrol.html>
+
+=cut
