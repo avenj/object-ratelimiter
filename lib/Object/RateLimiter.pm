@@ -2,9 +2,10 @@ package Object::RateLimiter;
 use strictures 1;
 use Carp;
 
-use Time::HiRes ();
-
 use Lowu 'array';
+
+use Scalar::Util ();
+use Time::HiRes ();
 
 sub EVENTS () { 0 }
 sub SECS   () { 1 }
@@ -22,17 +23,15 @@ sub new {
     $class = $rtype
   }
 
-  unless (defined $params{seconds} && defined $params{events}) {
-    confess "Constructor requires 'seconds =>' and 'events =>' parameters"
-  }
+  confess "Constructor requires 'seconds =>' and 'events =>' parameters"
+    unless defined $params{seconds}
+       and defined $params{events};
 
-  my $self = [
+  bless [
     $params{events},   # EVENTS
     $params{seconds},  # SECS
     undef              # QUEUE (lazy-build from ->delay)
-  ];
-
-  bless $self, $class
+  ], $class
 }
 
 sub clone {
@@ -44,9 +43,10 @@ sub clone {
   $params{seconds} = $self->seconds
     unless defined $params{seconds};
 
-  my $cloned = ref($self)->new(%params);
+  my $cloned = Scalar::Util::blessed($self)->new(%params);
 
   if (my $currentq = $self->_queue) {
+    # Subclasses beware; we muck about with the clone directly:
     $cloned->[QUEUE] = array( $currentq->all )
   }
 
@@ -72,7 +72,7 @@ sub delay {
   }
 
   $thisq->push( Time::HiRes::time );
-  return 0
+  0
 }
 
 sub clear {
