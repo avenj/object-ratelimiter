@@ -19,8 +19,8 @@ sub _queue   { $_[0]->[QUEUE]  }
 
 sub new {
   my ($class, %params) = @_;
-  if (my $rtype = blessed $class) {
-    $class = $rtype
+  if (my $type = blessed $class) {
+    $class = $type
   }
 
   confess "Constructor requires 'seconds =>' and 'events =>' parameters"
@@ -76,7 +76,11 @@ sub delay {
 }
 
 
-sub clear  { $_[0]->[QUEUE] = undef; 1 }
+sub clear {
+  $_[0]->[QUEUE] = undef;
+  1
+}
+
 sub expire {
   my ($self) = @_;
   $self->is_expired ? $self->clear : ()
