@@ -59,19 +59,18 @@ sub delay {
   my $ev_limit = $self->events;
 
   if ((my $ev_count = $thisq->count) >= $ev_limit) {
-    my $oldest_ts = $thisq->head;
+    my $oldest_ts = $thisq->get(0);
 
     my $delayed = ( 
       $oldest_ts 
       + ( $ev_count * $self->seconds / $ev_limit ) 
     ) - time;
 
-    return $delayed if $delayed > 0;
-
-    $thisq->shift
+    $delayed > 0 ? return $delayed : $thisq->shift
   }
 
   $thisq->push( time );
+
   0
 }
 
@@ -88,8 +87,8 @@ sub expire {
 
 sub is_expired {
   my ($self) = @_;
-  my $thisq  = $self->_queue       || return;
-  my $latest = scalar $thisq->tail || return;
+  my $thisq  = $self->_queue   || return;
+  my $latest = $thisq->get(-1) || return;
 
   time - $latest > $self->seconds ? 1 : ()
 }
