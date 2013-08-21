@@ -63,7 +63,7 @@ sub delay {
 
     my $delayed =
       ( $oldest_ts + ( $events * $self->seconds / $ev_limit ) )
-        - Time::HiRes::time();
+        - Time::HiRes::time;
 
     return $delayed if $delayed > 0;
 
@@ -92,7 +92,7 @@ sub is_expired {
   my $latest_ts = scalar $events->tail or return;
 
   # More than ->seconds seconds since last event was noted.
-  Time::HiRes::time() - $latest_ts > $self->seconds ? 1 : ()
+  Time::HiRes::time - $latest_ts > $self->seconds ? 1 : ()
 }
 
 1;
