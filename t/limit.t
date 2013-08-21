@@ -6,6 +6,11 @@ BEGIN { use_ok( 'Object::RateLimiter' ) }
 # new()
 eval {; Object::RateLimiter->new };
 cmp_ok $@, '=~', qr/parameters/, 'new() without args dies ok';
+eval {; Object::RateLimiter->new(events => 3) };
+cmp_ok $@, '=~', qr/parameters/, 'new() without seconds param dies ok';
+eval {; Object::RateLimiter->new(seconds => 3) };
+cmp_ok $@, '=~', qr/parameters/, 'new() without events param dies ok';
+
 my $ctrl = new_ok 'Object::RateLimiter' => [
   events  => 3,
   seconds => 900,
@@ -22,7 +27,13 @@ cmp_ok $ctrl->events,  '==', 3,   'events() ok';
 cmp_ok $ctrl->delay, '==', 0, 'delay 1 == 0 ok';
 cmp_ok $ctrl->delay, '==', 0, 'delay 2 == 0 ok';
 cmp_ok $ctrl->delay, '==', 0, 'delay 3 == 0 ok';
-cmp_ok $ctrl->delay, '>',  0, 'delay 4 > 0 ok';
+
+my $delay = $ctrl->delay;
+cmp_ok $delay, '>',  0, 'delay 4 > 0 ok';
+cmp_ok $delay, '<=', 900, 'delay 4 <= 900 ok';
+my $delay2 = $ctrl->delay;
+cmp_ok $delay2, '>',  0, 'delay 5 > 0 ok';
+cmp_ok $delay2, '<=', $delay, 'delay 5 <= delay 4 ok';
 
 # clone() 
 my $clone = $ctrl->clone( events => 10 );
