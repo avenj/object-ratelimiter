@@ -89,8 +89,8 @@ sub expire {
 sub is_expired {
   my ($self) = @_;
   my $events = $self->_queue || return;
-  my $latest_ts = scalar $events->tail or return;
 
+  my $latest_ts = $events->tail or return;
   # More than ->seconds seconds since last event was noted.
   Time::HiRes::time - $latest_ts > $self->seconds ? 1 : ()
 }
@@ -216,7 +216,7 @@ memory (a 10 event history uses about 1kb here).
 =head2 is_expired
 
 Returns true if the last seen event is outside of our time window (in other
-words, the event history is stale).
+words, the event history is stale) or there is no event history.
 
 Also see L</expire>
 
