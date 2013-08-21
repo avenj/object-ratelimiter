@@ -1,8 +1,8 @@
 package Object::RateLimiter;
 use strictures 1;
-use Carp;
+use Carp 'confess';
 
-use Lowu 'array';
+use List::Objects::WithUtils 'array';
 
 use Scalar::Util 'blessed';
 use Time::HiRes  'time';
