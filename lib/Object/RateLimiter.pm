@@ -165,6 +165,12 @@ This module uses L<Time::HiRes> to provide support for fractional seconds.
 
 Constructs a new rate-limiter with a clean event history.
 
+=head2 clear
+
+  $ctrl->clear;
+
+Clears the event history. Always returns true.
+
 =head2 clone
 
   my $new_ctrl = $ctrl->clone( events => 4 );
@@ -174,14 +180,6 @@ previous settings.
 
 The new limiter contains a clone of the event history; the old rate-limiter is
 left untouched.
-
-=head2 clear
-
-  $ctrl->clear;
-
-Clears the event history.
-
-Always returns true.
 
 =head2 delay
 
