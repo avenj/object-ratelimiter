@@ -4,8 +4,8 @@ use Carp;
 
 use Lowu 'array';
 
-use Scalar::Util ();
-use Time::HiRes ();
+use Scalar::Util 'blessed';
+use Time::HiRes 'time';
 
 sub EVENTS () { 0 }
 sub SECS   () { 1 }
@@ -43,7 +43,7 @@ sub clone {
   $params{seconds} = $self->seconds
     unless defined $params{seconds};
 
-  my $cloned = Scalar::Util::blessed($self)->new(%params);
+  my $cloned = blessed($self)->new(%params);
 
   if (my $currentq = $self->_queue) {
     # Subclasses beware; we muck about with the clone directly:
@@ -62,8 +62,7 @@ sub delay {
     my $oldest_ts = $thisq->head;
 
     my $delayed =
-      ( $oldest_ts + ( $events * $self->seconds / $ev_limit ) )
-        - Time::HiRes::time;
+      ( $oldest_ts + ( $events * $self->seconds / $ev_limit ) ) - time;
 
     return $delayed if $delayed > 0;
 
@@ -71,7 +70,7 @@ sub delay {
     $thisq->shift
   }
 
-  $thisq->push( Time::HiRes::time );
+  $thisq->push( time );
   0
 }
 
@@ -92,7 +91,7 @@ sub is_expired {
 
   my $latest_ts = $events->tail or return;
   # More than ->seconds seconds since last event was noted.
-  Time::HiRes::time - $latest_ts > $self->seconds ? 1 : ()
+  time - $latest_ts > $self->seconds ? 1 : ()
 }
 
 1;
