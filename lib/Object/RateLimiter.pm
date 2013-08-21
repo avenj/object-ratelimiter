@@ -83,20 +83,16 @@ sub clear {
 
 sub expire {
   my ($self) = @_;
+  $self->is_expired ? $self->clear : ()
+}
 
+sub is_expired {
+  my ($self) = @_;
   my $events = $self->_queue || return;
-  return unless $events->count;
+  my $latest_ts = scalar $events->tail or return;
 
-  my $latest_ts = $events->tail;
-  return unless defined $latest_ts;
-
-  if ( Time::HiRes::time() - $latest_ts > $self->seconds) {
-    # More than ->seconds seconds since last event was noted.
-    # We can clear().
-    return $self->clear
-  }
-
-  ()
+  # More than ->seconds seconds since last event was noted.
+  Time::HiRes::time() - $latest_ts > $self->seconds ? 1 : ()
 }
 
 1;
@@ -126,7 +122,8 @@ Object::RateLimiter - A flood control (rate limiter) object
 
   while (my $some_item = shift @work) {
     if (my $delay = $ctrl->delay) {
-      # Delayed $delay seconds.
+      # Delayed $delay (fractional) seconds.
+      # (You might want Time::HiRes::usleep, or yield to event loop, etc)
       sleep $delay;
     } else {
       # No delay.
@@ -143,7 +140,8 @@ Object::RateLimiter - A flood control (rate limiter) object
 =head1 DESCRIPTION
 
 This is a generic rate-limiter object, implementing the math described in
-L<http://www.perl.com/pub/2004/11/11/floodcontrol.html>.
+L<http://www.perl.com/pub/2004/11/11/floodcontrol.html> via light-weight
+array-type objects.
 
 The algorithm is fairly simple; the article linked above contains an in-depth
 discussion by Vladi Belperchinov-Shabanski (CPAN:
@@ -210,12 +208,19 @@ Returns the B<events> limit the object was constructed with.
 
   $ctrl->expire;
 
-Clears the event history if the last seen event is outside of our time window.
+Clears the event history if L</is_expired> is true.
 
 Returns true if L</clear> was called.
 
-(You're not required to call C<expire()>, but it can be useful to force a
-cleanup.)
+You're not required to call C<expire()>, but it can be useful to save a little
+memory (a 10 event history uses about 1kb here).
+
+=head2 is_expired
+
+Returns true if the last seen event is outside of our time window (in other
+words, the event history is stale).
+
+Also see L</expire>
 
 =head2 seconds
 

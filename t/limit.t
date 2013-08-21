@@ -30,11 +30,13 @@ cmp_ok $clone->delay,   '==', 0,   'cloned with new events param ok';
 cmp_ok $clone->seconds, '==', 900, 'cloned kept seconds() ok';
 
 # clone() + expire()
+ok !$ctrl->is_expired, 'is_expired() returned false value';
 ok !$ctrl->expire, 'expire() returned false value';
 ok $ctrl->_queue,  'expire() left queue alone';
 diag "This test will sleep for one second";
 my $expire = $ctrl->clone( seconds => 0.5 );
 sleep 1;
+ok $expire->is_expired, 'is_expired() returned true value';
 ok $expire->expire,  'expire() returned true value';
 ok !$expire->_queue, 'expire() cleared queue';
 
