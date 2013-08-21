@@ -5,7 +5,7 @@ use Carp;
 use Lowu 'array';
 
 use Scalar::Util 'blessed';
-use Time::HiRes 'time';
+use Time::HiRes  'time';
 
 sub EVENTS () { 0 }
 sub SECS   () { 1 }
@@ -58,11 +58,13 @@ sub delay {
   my $thisq  = $self->[QUEUE] ||= array;
   my $ev_limit = $self->events;
 
-  if ((my $events = $thisq->count) >= $ev_limit) {
+  if ((my $ev_count = $thisq->count) >= $ev_limit) {
     my $oldest_ts = $thisq->head;
 
-    my $delayed =
-      ( $oldest_ts + ( $events * $self->seconds / $ev_limit ) ) - time;
+    my $delayed = ( 
+      $oldest_ts 
+      + ( $ev_count * $self->seconds / $ev_limit ) 
+    ) - time;
 
     return $delayed if $delayed > 0;
 
@@ -87,11 +89,10 @@ sub expire {
 
 sub is_expired {
   my ($self) = @_;
-  my $events = $self->_queue || return;
+  my $thisq  = $self->_queue       || return;
+  my $latest = scalar $thisq->tail || return;
 
-  my $latest_ts = $events->tail or return;
-  # More than ->seconds seconds since last event was noted.
-  time - $latest_ts > $self->seconds ? 1 : ()
+  time - $latest > $self->seconds ? 1 : ()
 }
 
 1;
