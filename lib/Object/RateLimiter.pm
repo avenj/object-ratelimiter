@@ -19,7 +19,7 @@ sub _queue   { $_[0]->[QUEUE]  }
 
 sub new {
   my ($class, %params) = @_;
-  if (my $rtype = ref $class) {
+  if (my $rtype = blessed $class) {
     $class = $rtype
   }
 
@@ -46,12 +46,12 @@ sub clone {
   my $cloned = blessed($self)->new(%params);
 
   if (my $currentq = $self->_queue) {
-    # Subclasses beware; we muck about with the clone directly:
     $cloned->[QUEUE] = array( $currentq->all )
   }
 
   $cloned
 }
+
 
 sub delay {
   my ($self) = @_;
@@ -68,7 +68,6 @@ sub delay {
 
     return $delayed if $delayed > 0;
 
-    # No waiting.
     $thisq->shift
   }
 
@@ -76,12 +75,8 @@ sub delay {
   0
 }
 
-sub clear {
-  my ($self) = @_;
-  $self->[QUEUE] = undef;
-  1
-}
 
+sub clear  { $_[0]->[QUEUE] = undef; 1 }
 sub expire {
   my ($self) = @_;
   $self->is_expired ? $self->clear : ()
