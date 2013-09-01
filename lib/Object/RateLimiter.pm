@@ -199,6 +199,9 @@ left untouched.
     do_work;
   }
 
+  # Same as calling ->delay:
+  my $delay = $ctrl->();
+
 The C<delay()> method determines if some work can be done now, or should wait.
 
 When called, event timestamps are considered; if we have exceeded our limit,
