@@ -12,6 +12,14 @@ sub SECS   () { 1 }
 sub QUEUE  () { 2 }
 
 use namespace::clean;
+use overload
+  bool     => sub { 1 },
+  '&{}'    => sub {
+    my $self = shift;
+    sub { $self->delay }
+  },
+  fallback => 1;
+
 
 sub seconds  { $_[0]->[SECS]   }
 sub events   { $_[0]->[EVENTS] }
@@ -135,6 +143,9 @@ Object::RateLimiter - A flood control (rate limiter) object
   # Clear the event history unconditionally:
   $ctrl->clear;
 
+  # Same as calling ->delay:
+  my $delayed = $ctrl->();
+
 =head1 DESCRIPTION
 
 This is a generic rate-limiter object, implementing the math described in
@@ -187,6 +198,9 @@ left untouched.
     # Not delayed.
     do_work;
   }
+
+  # Same as calling ->delay:
+  my $delay = $ctrl->();
 
 The C<delay()> method determines if some work can be done now, or should wait.
 
