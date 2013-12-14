@@ -1,5 +1,5 @@
 package Object::RateLimiter;
-use strictures 1;
+use strict; use warnings FATAL => 'all';
 use Carp 'confess';
 
 use List::Objects::WithUtils 'array';
@@ -164,6 +164,10 @@ L<http://www.metacpan.org/author/CADE>):
     - time()
 
 This module uses L<Time::HiRes> to provide support for fractional seconds.
+
+See L<Algorithm::FloodControl> for a similar module with a functional
+interface & persistent on-disk storage features (for use with CGI
+applications).
 
 =head2 new
 
