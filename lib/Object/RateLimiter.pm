@@ -87,6 +87,8 @@ sub is_expired {
 
 =pod
 
+=for Pod::Coverage EVENTS QUEUE SECS
+
 =head1 NAME
 
 Object::RateLimiter - A flood control (rate limiter) object
