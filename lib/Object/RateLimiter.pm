@@ -1,17 +1,13 @@
 package Object::RateLimiter;
 use strict; use warnings FATAL => 'all';
+
 use Carp 'confess';
-
 use List::Objects::WithUtils 'array';
-
 use Scalar::Util 'blessed';
 use Time::HiRes  'time';
 
-sub EVENTS () { 0 }
-sub SECS   () { 1 }
-sub QUEUE  () { 2 }
-
 use namespace::clean;
+
 use overload
   bool     => sub { 1 },
   '&{}'    => sub {
@@ -20,27 +16,24 @@ use overload
   },
   fallback => 1;
 
-
+use Object::ArrayType::New
+  [ 
+    events  => 'EVENTS',
+    seconds => 'SECS',
+    ''      => 'QUEUE'
+  ];
 sub seconds  { $_[0]->[SECS]   }
 sub events   { $_[0]->[EVENTS] }
 sub _queue   { $_[0]->[QUEUE]  }
 
-sub new {
-  my ($class, %params) = @_;
-  if (my $type = blessed $class) {
-    $class = $type
-  }
-
+use Class::Method::Modifiers;
+around new => sub {
+  my ($orig, $class) = splice @_, 0, 2;
+  my $self = $class->$orig(@_);
   confess "Constructor requires 'seconds =>' and 'events =>' parameters"
-    unless defined $params{seconds}
-       and defined $params{events};
-
-  bless [
-    $params{events},   # EVENTS
-    $params{seconds},  # SECS
-    undef              # QUEUE (lazy-build from ->delay)
-  ], $class
-}
+    unless defined $self->seconds and defined $self->events;
+  $self
+};
 
 sub clone {
   my ($self, %params) = @_;
