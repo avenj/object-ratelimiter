@@ -33,19 +33,15 @@ around new => sub {
 
 sub clone {
   my ($self, %params) = @_;
-
   $params{events} = $self->events
     unless defined $params{events};
-
   $params{seconds} = $self->seconds
     unless defined $params{seconds};
 
-  my $cloned = blessed($self)->new(%params);
-
+  my $cloned = $self->new(%params);
   if (my $currentq = $self->_queue) {
     $cloned->[QUEUE] = array( $currentq->all )
   }
-
   $cloned
 }
 
@@ -72,10 +68,7 @@ sub delay {
 }
 
 
-sub clear {
-  $_[0]->[QUEUE] = undef;
-  1
-}
+sub clear { $_[0]->[QUEUE] = undef; 1 }
 
 sub expire {
   my ($self) = @_;
