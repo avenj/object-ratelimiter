@@ -17,11 +17,7 @@ use overload
   fallback => 1;
 
 use Object::ArrayType::New
-  [ 
-    events  => 'EVENTS',
-    seconds => 'SECS',
-    ''      => 'QUEUE'
-  ];
+  [ events  => '', seconds => 'SECS', '' => 'QUEUE' ];
 sub seconds  { $_[0]->[SECS]   }
 sub events   { $_[0]->[EVENTS] }
 sub _queue   { $_[0]->[QUEUE]  }
