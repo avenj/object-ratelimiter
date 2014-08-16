@@ -59,7 +59,7 @@ sub delay {
       + ( $ev_count * $self->seconds / $ev_limit ) 
     ) - time;
 
-    $delayed > 0 ? return $delayed : $thisq->shift
+    $delayed > 0 ? return($delayed) : $thisq->shift
   }
 
   $thisq->push( time );
