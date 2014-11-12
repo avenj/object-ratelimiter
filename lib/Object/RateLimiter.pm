@@ -80,7 +80,7 @@ sub is_expired {
   my $thisq  = $self->_queue   || return;
   my $latest = $thisq->get(-1) || return;
 
-  time - $latest > $self->seconds ? 1 : ()
+  time - $latest > $self->seconds
 }
 
 1;
