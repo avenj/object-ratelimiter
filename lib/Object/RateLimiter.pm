@@ -33,10 +33,8 @@ around new => sub {
 
 sub clone {
   my ($self, %params) = @_;
-  $params{events} = $self->events
-    unless defined $params{events};
-  $params{seconds} = $self->seconds
-    unless defined $params{seconds};
+  $params{events}  = $self->events  unless defined $params{events};
+  $params{seconds} = $self->seconds unless defined $params{seconds};
 
   my $cloned = $self->new(%params);
   if (my $currentq = $self->_queue) {
@@ -72,7 +70,8 @@ sub clear { $_[0]->[QUEUE] = undef; 1 }
 
 sub expire {
   my ($self) = @_;
-  $self->is_expired ? $self->clear : ()
+  return unless $self->is_expired;
+  $self->clear
 }
 
 sub is_expired {
