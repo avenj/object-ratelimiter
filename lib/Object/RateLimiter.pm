@@ -82,7 +82,15 @@ sub is_expired {
   time - $latest > $self->seconds
 }
 
-1;
+print
+  qq[<avenj> it's not\n],
+  qq[<JCW> What's not what?\n],
+  qq[<Capn_Refsmmat> I always thought that\n],
+  qq[<JCW> Thought what?  :o\n],
+  qq[<Capn_Refsmmat> well, I've always had this vague feeling of\n],
+  qq[<JCW> Heh, you sound like seuss.\n],
+  qq[<Capn_Refsmmat> I'm very by your remark\n]
+unless caller; 1;
 
 =pod
 
@@ -113,11 +121,9 @@ Object::RateLimiter - A flood control (rate limiter) object
     if (my $delay = $ctrl->delay) {
       # Delayed $delay (fractional) seconds.
       # (You might want Time::HiRes::sleep, or yield to event loop, etc)
-      sleep $delay;
-    } else {
-      # No delay.
-      print $some_item->()
+      sleep $delay
     }
+    print $some_item->()
   }
 
   # Clear the event history if it's stale:
@@ -165,7 +171,7 @@ Constructs a new rate-limiter with a clean event history.
 
   $ctrl->clear;
 
-Clears the event history. Always returns true.
+Clear the event history.
 
 =head2 clone
 
@@ -209,8 +215,8 @@ Clears the event history if L</is_expired> is true.
 
 Returns true if L</clear> was called.
 
-You're not required to call C<expire()>, but it can be useful to save a little
-memory (a 10 event history uses about 1kb here).
+(You're not required to call C<expire()>, but it can be useful to save a
+little memory.)
 
 =head2 is_expired
 
