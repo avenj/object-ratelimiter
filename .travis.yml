@@ -9,7 +9,7 @@ language: perl
 
 install:
   - cpanm --quiet --notest Dist::Zilla Test::NoTabs
-  - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
+  - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest
   - dzil listdeps | grep -vP '[^\w:]' | cpanm --verbose
 
 script: dzil test
