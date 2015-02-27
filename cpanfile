@@ -1,3 +1,4 @@
+requires "strictures"               => "2";
 requires "List::Objects::WithUtils" => "2";
 requires "Object::ArrayType::New"   => "0.002";
 requires "namespace::clean"         => "0";
