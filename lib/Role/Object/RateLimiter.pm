@@ -9,13 +9,11 @@ use Role::Tiny;
 
 sub delayed {
   my ($self, %args) = @_;
-  if (%args) {
-    return $self->{__rl} = Object::RateLimiter->new(%args);
-  }
-  unless (defined $self->{__rl}) {
-    confess 'Attempted to call ->delayed without a configured ratelimiter',
-            ' -- perhaps you wanted ->delayed(events => $x, seconds => $y)'
-  }
+  return $self->{__rl} = Object::RateLimiter->new(%args) if %args;
+  confess 
+    'Attempted to call ->delayed without a configured ratelimiter',
+    ' -- perhaps you wanted ->delayed(events => $x, seconds => $y)'
+      unless defined $self->{__rl};
   $self->{__rl}->delay
 }
 
