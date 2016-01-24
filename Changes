@@ -1,5 +1,11 @@
 Revision history for Perl module Object::RateLimiter
 
+1.002001 2015-01-24
+
+  - Add Role::Object::RateLimiter
+
+  - 'use strictures 2' for saner fatal warnings behavior
+
 1.001003 2014-12-15
 
   - POD clarifications
