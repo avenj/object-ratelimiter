@@ -170,6 +170,8 @@ applications).
 
 Constructs a new rate-limiter with a clean event history.
 
+Accepts params as a list or a single HASH.
+
 =head2 clear
 
   $ctrl->clear;
@@ -225,7 +227,7 @@ little memory.)
 
   my $opts = $ctrl->export;
   # ... later, perhaps after storing/retrieving ...
-  my $recreated = Object::RateLimiter->new(%$opts);
+  my $recreated = Object::RateLimiter->new($opts);
 
 Exports the current state of the rate-limiter as a reference to a hash; the
 exported hash can be fed to L</new> to recreate the rate-limiter.
