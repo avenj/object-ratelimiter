@@ -10,7 +10,6 @@ use Time::HiRes  'time';
 use namespace::clean;
 
 use overload
-  bool     => sub { 1 },
   '&{}'    => sub {
     my $self = shift;
     sub { $self->delay }
