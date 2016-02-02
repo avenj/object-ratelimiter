@@ -89,13 +89,10 @@ sub is_expired {
 }
 
 print
-  qq[<avenj> it's not\n],
-  qq[<JCW> What's not what?\n],
-  qq[<Capn_Refsmmat> I always thought that\n],
-  qq[<JCW> Thought what?  :o\n],
-  qq[<Capn_Refsmmat> well, I've always had this vague feeling of\n],
-  qq[<JCW> Heh, you sound like seuss.\n],
-  qq[<Capn_Refsmmat> I'm very by your remark\n]
+  qq[<Gilded> Every girlfriendless introvert is now on a list\n],
+  qq[<c[_]> already was^\n],
+  qq[<Gilded> Well yeah the World of Warcraft subscriber database],
+  qq[ but I meant like a government thing\n]
 unless caller; 1;
 
 =pod

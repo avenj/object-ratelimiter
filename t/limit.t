@@ -46,14 +46,16 @@ cmp_ok $delay3, '<=', $delay2, 'export/regen limiter delay <= prev ok';
 # clone() 
 my $clone = $ctrl->clone( events => 10 );
 cmp_ok $clone->delay,   '==', 0,   'cloned with new events param ok';
-cmp_ok $clone->seconds, '==', 1200, 'cloned kept seconds() ok';
+cmp_ok $clone->events,  '==', 10,  'cloned has new events()';
+cmp_ok $clone->seconds, '==', 1200, 'cloned kept seconds()';
 
 # clone() + expire()
 ok !$ctrl->is_expired, 'is_expired() returned false value';
 ok !$ctrl->expire, 'expire() returned false value';
 ok $ctrl->_queue,  'expire() left queue alone';
-note "This test will sleep for one second";
 my $expire = $ctrl->clone( seconds => 0.5 );
+cmp_ok $expire->seconds, '==', 0.5, 'cloned has new seconds()';
+note "This test will sleep for one second";
 sleep 1;
 ok $expire->is_expired, 'is_expired() returned true value';
 ok $expire->expire,  'expire() returned true value';
