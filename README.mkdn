@@ -69,6 +69,8 @@ applications).
 
 Constructs a new rate-limiter with a clean event history.
 
+Accepts params as a list or a single HASH.
+
 ## clear
 
     $ctrl->clear;
@@ -84,17 +86,6 @@ previous settings.
 
 The new limiter contains a clone of the event history; the old rate-limiter is
 left untouched.
-
-## export
-
-    my $opts = $ctrl->export;
-    # ... later, perhaps after storing/retrieving ...
-    my $recreated = Object::RateLimiter->new(%$opts);
-
-Exports the current state of the rate-limiter as a reference to a hash; the
-exported hash can be fed to ["new"](#new) to recreate the rate-limiter.
-
-This is useful if the rate-limiter's state must be stored persistently. 
 
 ## delay
 
@@ -130,6 +121,17 @@ Returns true if ["clear"](#clear) was called.
 
 (You're not required to call `expire()`, but it can be useful to save a
 little memory.)
+
+## export
+
+    my $opts = $ctrl->export;
+    # ... later, perhaps after storing/retrieving ...
+    my $recreated = Object::RateLimiter->new($opts);
+
+Exports the current state of the rate-limiter as a reference to a hash; the
+exported hash can be fed to ["new"](#new) to recreate the rate-limiter.
+
+This is useful if the rate-limiter's state must be stored persistently. 
 
 ## is\_expired
 

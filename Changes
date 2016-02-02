@@ -1,5 +1,11 @@
 Revision history for Perl module Object::RateLimiter
 
+1.004001 2016-02-02
+
+  - Fix ->clone (busted in v1.3.1), better tests for same
+
+  - Add ->TO_JSON hook (alias for ->export)
+
 1.003001 2016-02-02
 
   - Improved support for persistence; add ->export method & constructor
