@@ -18,7 +18,7 @@ use overload
   fallback => 1;
 
 use Object::ArrayType::New
-  [ events  => '', seconds => 'SECS', '' => 'QUEUE' ];
+  [ events  => '', seconds => 'SECS', _queue => 'QUEUE' ];
 sub seconds  { $_[0]->[SECS]   }
 sub events   { $_[0]->[EVENTS] }
 sub _queue   { $_[0]->[QUEUE]  }
@@ -29,6 +29,8 @@ around new => sub {
   my $self = $class->$orig(@_);
   confess "Constructor requires 'seconds =>' and 'events =>' parameters"
     unless defined $self->seconds and defined $self->events;
+  $self->[QUEUE] = array(@{ $self->_queue })
+    if $self->_queue and ref $self->_queue eq 'ARRAY';
   $self
 };
 
@@ -44,6 +46,14 @@ sub clone {
   $cloned
 }
 
+sub export {
+  my ($self) = @_;
+  +{
+    events   => $self->events, 
+    seconds  => $self->seconds, 
+    _queue   => $self->_queue->unbless,
+  }
+}
 
 sub delay {
   my ($self) = @_;
@@ -183,6 +193,17 @@ previous settings.
 
 The new limiter contains a clone of the event history; the old rate-limiter is
 left untouched.
+
+=head2 export
+
+  my $opts = $ctrl->export;
+  # ... later, perhaps after storing/retrieving ...
+  my $recreated = Object::RateLimiter->new(%$opts);
+
+Exports the current state of the rate-limiter as a reference to a hash; the
+exported hash can be fed to L</new> to recreate the rate-limiter.
+
+This is useful if the rate-limiter's state must be stored persistently. 
 
 =head2 delay
 

@@ -34,6 +34,15 @@ my $delay2 = $ctrl->delay;
 cmp_ok $delay2, '>',  0, 'delay 5 > 0 ok';
 cmp_ok $delay2, '<=', $delay, 'delay 5 <= delay 4 ok';
 
+# export()
+my $opts = $ctrl->export;
+my $fresh = Object::RateLimiter->new(%$opts);
+cmp_ok $fresh->seconds, '==', 1200, 'exported seconds() ok';
+cmp_ok $fresh->events,  '==', 3,    'exported events() ok';
+my $delay3 = $ctrl->delay;
+cmp_ok $delay3, '>', 0, 'export/regen limiter delay > 0 ok';
+cmp_ok $delay3, '<=', $delay2, 'export/regen limiter delay <= prev ok';
+
 # clone() 
 my $clone = $ctrl->clone( events => 10 );
 cmp_ok $clone->delay,   '==', 0,   'cloned with new events param ok';
