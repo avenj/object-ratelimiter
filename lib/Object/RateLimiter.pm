@@ -186,17 +186,6 @@ previous settings.
 The new limiter contains a clone of the event history; the old rate-limiter is
 left untouched.
 
-=head2 export
-
-  my $opts = $ctrl->export;
-  # ... later, perhaps after storing/retrieving ...
-  my $recreated = Object::RateLimiter->new(%$opts);
-
-Exports the current state of the rate-limiter as a reference to a hash; the
-exported hash can be fed to L</new> to recreate the rate-limiter.
-
-This is useful if the rate-limiter's state must be stored persistently. 
-
 =head2 delay
 
   if (my $delay = $ctrl->delay) {
@@ -231,6 +220,17 @@ Returns true if L</clear> was called.
 
 (You're not required to call C<expire()>, but it can be useful to save a
 little memory.)
+
+=head2 export
+
+  my $opts = $ctrl->export;
+  # ... later, perhaps after storing/retrieving ...
+  my $recreated = Object::RateLimiter->new(%$opts);
+
+Exports the current state of the rate-limiter as a reference to a hash; the
+exported hash can be fed to L</new> to recreate the rate-limiter.
+
+This is useful if the rate-limiter's state must be stored persistently. 
 
 =head2 is_expired
 
