@@ -41,6 +41,7 @@ sub clone {
   $self->new(%params);
 }
 
+{ no warnings 'once'; *TO_JSON = *export }
 sub export {
   my ($self) = @_;
   +{
@@ -97,7 +98,7 @@ unless caller; 1;
 
 =pod
 
-=for Pod::Coverage EVENTS QUEUE SECS
+=for Pod::Coverage EVENTS QUEUE SECS TO_JSON
 
 =head1 NAME
 
