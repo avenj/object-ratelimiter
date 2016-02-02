@@ -38,12 +38,8 @@ sub clone {
   my ($self, %params) = @_;
   $params{events}  = $self->events  unless defined $params{events};
   $params{seconds} = $self->seconds unless defined $params{seconds};
-
-  my $cloned = $self->new(%params);
-  if (my $currentq = $self->_queue) {
-    $cloned->[QUEUE] = array( $currentq->all )
-  }
-  $cloned
+  $params{_queue}  = $self->_queue  if $self->_queue;
+  $self->new(%params);
 }
 
 sub export {
