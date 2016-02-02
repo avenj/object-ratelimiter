@@ -37,7 +37,7 @@ sub clone {
   my ($self, %params) = @_;
   $params{events}  = $self->events  unless defined $params{events};
   $params{seconds} = $self->seconds unless defined $params{seconds};
-  $params{_queue}  = $self->_queue  if $self->_queue;
+  $params{_queue}  = $self->_queue->copy if $self->_queue;
   $self->new(%params);
 }
 

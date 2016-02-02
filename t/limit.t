@@ -45,6 +45,7 @@ cmp_ok $delay3, '<=', $delay2, 'export/regen limiter delay <= prev ok';
 
 # clone() 
 my $clone = $ctrl->clone( events => 10 );
+ok $clone->_queue != $ctrl->_queue, 'cloned has its own event queue';
 cmp_ok $clone->delay,   '==', 0,   'cloned with new events param ok';
 cmp_ok $clone->events,  '==', 10,  'cloned has new events()';
 cmp_ok $clone->seconds, '==', 1200, 'cloned kept seconds()';
